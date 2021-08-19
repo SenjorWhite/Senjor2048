@@ -24,6 +24,14 @@ describe('Board', () => {
         expect(board.getTiles()).toEqual(expectedBoard);
     })
 
+    it('Should return the max value in the tiles ', () => {
+        const board = new Board();
+        board.init();
+        board.setTiles([[0, 2, 4, 8], [16, 2, 4, 8], [0, 2, 4, 8], [0, 32, 4, 8]]);
+        expect(board.getMaxValue()).toBe(32);
+    })
+
+
     it('Should slide a tile to an expected location', () => {
         const board = new Board();
         board.init();
@@ -66,7 +74,20 @@ describe('Board', () => {
         board.setTiles([[2, 4, 0, 0], [2, 2, 0, 0], [0, 4, 0, 0,], [2, 4, 0, 0]]);
         board.move('DOWN');
         const expectedBoard = [[0, 0, 2, 4], [0, 0, 0, 4], [0, 0, 0, 4], [0, 0, 2, 4]];
-        console.log(board.getTiles());
         expect(board.getTiles()).toEqual(expectedBoard);
+    })
+
+    it('Should return false when the board is not movable', () => {
+        const board = new Board();
+        board.init();
+        board.setTiles([[2, 32, 4, 2], [64, 4, 8, 16], [2, 8, 256, 8,], [32, 16, 4, 2]]);
+        expect(board.isMovable()).toBe(false);
+    })
+
+    it('Should return true if the board is still movable even it\'s full', () => {
+        const board = new Board();
+        board.init();
+        board.setTiles([[2, 32, 4, 2], [64, 4, 8, 16], [64, 8, 256, 8,], [32, 16, 4, 2]]);
+        expect(board.isMovable()).toBe(true);
     })
 })

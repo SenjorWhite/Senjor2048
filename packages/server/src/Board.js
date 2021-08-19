@@ -1,5 +1,5 @@
 let tiles = [];
-const boardSize = 4;
+const BoardSize = 4;
 const probabilitySettings = [{ number: 2, probability: 90 }, { number: 4, probability: 10 }];
 const probabilityTable = [];
 let unmergedTiles = [];
@@ -20,8 +20,8 @@ function Board() {
 
     this.getEmptyTiles = () => {
         let emptyTiles = [];
-        for (let i = 0; i < boardSize; i++) {
-            for (let j = 0; j < boardSize; j++) {
+        for (let i = 0; i < BoardSize; i++) {
+            for (let j = 0; j < BoardSize; j++) {
                 if (tiles[i][j] === 0) {
                     emptyTiles.push({ x: i, y: j });
                 }
@@ -48,30 +48,30 @@ function Board() {
         resetMergedTile();
         switch (direction.toUpperCase()) {
             case 'UP':
-                for (let i = 0; i < boardSize; i++) {
-                    for (let j = 0; j < boardSize; j++) {
+                for (let i = 0; i < BoardSize; i++) {
+                    for (let j = 0; j < BoardSize; j++) {
                         this.slideTile({ x: i, y: j }, { x: 0, y: -1 });
                     }
                 }
                 break;
             case 'DOWN':
-                for (let i = 0; i < boardSize; i++) {
-                    for (let j = boardSize - 1; j >= 0; j--) {
+                for (let i = 0; i < BoardSize; i++) {
+                    for (let j = BoardSize - 1; j >= 0; j--) {
                         this.slideTile({ x: i, y: j }, { x: 0, y: 1 });
                     }
                 }
                 break;
                 break;
             case 'RIGHT':
-                for (let i = boardSize - 1; i >= 0; i--) {
-                    for (let j = 0; j < boardSize; j++) {
+                for (let i = BoardSize - 1; i >= 0; i--) {
+                    for (let j = 0; j < BoardSize; j++) {
                         this.slideTile({ x: i, y: j }, { x: 1, y: 0 });
                     }
                 }
                 break;
             case 'LEFT':
-                for (let i = 0; i < boardSize; i++) {
-                    for (let j = 0; j < boardSize; j++) {
+                for (let i = 0; i < BoardSize; i++) {
+                    for (let j = 0; j < BoardSize; j++) {
                         this.slideTile({ x: i, y: j }, { x: -1, y: 0 });
                     }
                 }
@@ -112,6 +112,44 @@ function Board() {
             }
         }
     }
+
+    this.getMaxValue = () => {
+        let max = 0;
+        for (let i = 0; i < BoardSize; i++) {
+            for (let j = 0; j < BoardSize; j++) {
+                if (tiles[i][j] > max) {
+                    max = tiles[i][j];
+                }
+            }
+        }
+        return max;
+    }
+
+    this.isMovable = () => {
+        let movable = false;
+        for (let i = 0; i < BoardSize; i++) {
+            for (let j = 0; j < BoardSize; j++) {
+                if (isSlidable({ x: i, y: j })) {
+                    movable = true;
+                    break;
+                }
+            }
+        }
+        return movable;
+    }
+}
+
+function isSlidable(location) {
+    let slidable = false;
+    let vectors = [{ x: 0, y: 1 }, { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: -1 }];
+    vectors.forEach(vector => {
+        let nextLocation = { x: location.x + vector.x, y: location.y + vector.y };
+        let value = tiles[location.x][location.y];
+        if (isValidLocation(nextLocation) && (tiles[nextLocation.x][nextLocation.y] === 0 || tiles[nextLocation.x][nextLocation.y] === value)) {
+            slidable = true;
+        }
+    })
+    return slidable;
 }
 
 function isUnmergedTile(location) {
@@ -119,9 +157,9 @@ function isUnmergedTile(location) {
 }
 
 function resetMergedTile() {
-    for (let i = 0; i < boardSize; i++) {
+    for (let i = 0; i < BoardSize; i++) {
         unmergedTiles[i] = [];
-        for (let j = 0; j < boardSize; j++) {
+        for (let j = 0; j < BoardSize; j++) {
             unmergedTiles[i].push(true);
         }
     }
@@ -132,7 +170,7 @@ function isValidLocation(location) {
     let valid = true;
     if (location.x < 0 || location.y < 0) {
         valid = false;
-    } else if (location.x >= boardSize || location.y >= boardSize) {
+    } else if (location.x >= BoardSize || location.y >= BoardSize) {
         valid = false;
     }
 
