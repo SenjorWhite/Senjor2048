@@ -2,6 +2,7 @@ let tiles = [];
 const boardSize = 4;
 const probabilitySettings = [{ number: 2, probability: 90 }, { number: 4, probability: 10 }];
 const probabilityTable = [];
+let unmergedTiles = [];
 
 function Board() {
     this.init = (elements) => {
@@ -11,8 +12,8 @@ function Board() {
             tiles = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
         }
 
+        resetMergedTile();
         generateProbabilityTable();
-        console.log(probabilityTable);
     };
 
     this.getTiles = () => tiles;
@@ -44,18 +45,98 @@ function Board() {
     }
 
     this.move = (direction) => {
-        switch (direction.toUpperCase) {
+        resetMergedTile();
+        switch (direction.toUpperCase()) {
             case 'UP':
+                for (let i = 0; i < boardSize; i++) {
+                    for (let j = 0; j < boardSize; j++) {
+                        this.slideTile({ x: i, y: j }, { x: 0, y: -1 });
+                    }
+                }
                 break;
             case 'DOWN':
+                for (let i = 0; i < boardSize; i++) {
+                    for (let j = boardSize - 1; j >= 0; j--) {
+                        this.slideTile({ x: i, y: j }, { x: 0, y: 1 });
+                    }
+                }
+                break;
                 break;
             case 'RIGHT':
+                for (let i = boardSize - 1; i >= 0; i--) {
+                    for (let j = 0; j < boardSize; j++) {
+                        this.slideTile({ x: i, y: j }, { x: 1, y: 0 });
+                    }
+                }
                 break;
-            case 'Left':
+            case 'LEFT':
+                for (let i = 0; i < boardSize; i++) {
+                    for (let j = 0; j < boardSize; j++) {
+                        this.slideTile({ x: i, y: j }, { x: -1, y: 0 });
+                    }
+                }
                 break;
             default:
         }
     }
+
+    // vector format should looks like {x:value , y:value} 
+    // e.g. {x:0, y:-1} means sliding UP
+    this.slideTile = (location, vector) => {
+        const currentValue = tiles[location.x][location.y];
+        let currentLocation = location;
+
+        if (currentValue === 0)
+            return;
+
+        while (true) {
+            const nextLocation = { x: currentLocation.x + vector.x, y: currentLocation.y + vector.y };
+
+            if (isValidLocation(nextLocation)) {
+                const valueOnNextLocation = tiles[nextLocation.x][nextLocation.y];
+
+                if (valueOnNextLocation === 0) {
+                    tiles[nextLocation.x][nextLocation.y] = currentValue;
+                    tiles[currentLocation.x][currentLocation.y] = 0;
+                    currentLocation = nextLocation;
+                } else if (valueOnNextLocation === currentValue && isUnmergedTile(nextLocation)) {
+                    tiles[nextLocation.x][nextLocation.y] = currentValue * 2;
+                    tiles[currentLocation.x][currentLocation.y] = 0;
+                    unmergedTiles[nextLocation.x][nextLocation.y] = false;
+                    break;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+function isUnmergedTile(location) {
+    return unmergedTiles[location.x][location.y];
+}
+
+function resetMergedTile() {
+    for (let i = 0; i < boardSize; i++) {
+        unmergedTiles[i] = [];
+        for (let j = 0; j < boardSize; j++) {
+            unmergedTiles[i].push(true);
+        }
+    }
+}
+
+
+function isValidLocation(location) {
+    let valid = true;
+    if (location.x < 0 || location.y < 0) {
+        valid = false;
+    } else if (location.x >= boardSize || location.y >= boardSize) {
+        valid = false;
+    }
+
+    return valid;
 }
 
 function generateProbabilityTable() {
