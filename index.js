@@ -23,6 +23,7 @@ app.get('/2048/move/:direction', (req, res) => {
     if (result === false) {
         res.send({ error: "It's not a valid move." });
     } else {
+        // the new tile should be automatically added into the gameBoard
         if (game.isBoardChanged())
             game.insertTile();
         res.send({ status: game.gameStatus, gameBoard: JSON.stringify(game.getBoard()) });
