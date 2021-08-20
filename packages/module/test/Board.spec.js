@@ -24,6 +24,26 @@ describe('Board', () => {
         expect(board.getTiles()).toEqual(expectedBoard);
     })
 
+    it('Should return false if there is no space for inserting a new tile', () => {
+        const board = new Board();
+        board.init([[16, 2, 4, 8], [16, 2, 4, 8], [16, 2, 4, 8], [16, 2, 4, 8]]);
+        expect(board.assignNewTile()).toEqual(false);
+    })
+
+    it('Should show there was no tile moved after an ineffective move', () => {
+        const board = new Board();
+        board.init([[0, 0, 0, 0], [0, 0, 0, 4], [0, 0, 0, 2], [4, 4, 0, 4]]);
+        board.move('RIGHT');
+        expect(board.moved).toBe(false);
+    })
+
+    it('Should show there has some changes after an effective move', () => {
+        const board = new Board();
+        board.init([[0, 4, 0, 0], [0, 0, 0, 4], [0, 0, 0, 2], [4, 4, 0, 4]]);
+        board.move('RIGHT');
+        expect(board.moved).toBe(true);
+    })
+
     it('Should return the max value in the tiles ', () => {
         const board = new Board();
         board.init();

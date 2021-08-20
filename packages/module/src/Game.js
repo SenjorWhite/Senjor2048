@@ -3,11 +3,10 @@ let board = new Board();
 
 function Game() {
     this.gameStatus = 'PLAYABLE';
-    this.board = new Board();
     this.init = (elements) => {
         board.init();
         if (elements) {
-            this.board.setTiles(elements);
+            board.setTiles(elements);
         } else {
             board.assignNewTile();
             board.assignNewTile();
@@ -15,13 +14,15 @@ function Game() {
     }
     this.getEmptyTiles = () => board.getEmptyTiles();
     this.getBoard = () => board.getTiles();
+    this.isBoardChanged = () => board.moved;
 
     this.move = (direction) => {
-        board.move(direction);
+        let result = board.move(direction);
         this.updateStatus();
+        return result;
     }
     this.insertTile = () => {
-        board.assignNewTile();
+        return board.assignNewTile();
     }
 
     this.updateStatus = () => {

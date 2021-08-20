@@ -5,7 +5,6 @@ describe('Game', () => {
     it('Should init a new game board', () => {
         const game = new Game();
         game.init();
-        const gameBoard = game.getBoard();
         expect(game.getBoard()).not.toBeNull();
     })
 
@@ -27,7 +26,7 @@ describe('Game', () => {
         const expectedBoard = [[0, 2, 4, 8], [0, 2, 4, 8], [0, 2, 4, 8], [0, 2, 4, 8]];
         const game = new Game();
         game.init(expectedBoard);
-        expect(game.board.getTiles()).toEqual(expectedBoard);
+        expect(game.getBoard()).toEqual(expectedBoard);
     })
 
     it('Should update the status to "WIN" after a winning move', () => {

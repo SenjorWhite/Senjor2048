@@ -17,6 +17,7 @@ function Board() {
     };
 
     this.getTiles = () => tiles;
+    this.moved = false;
 
     this.getEmptyTiles = () => {
         let emptyTiles = [];
@@ -40,12 +41,17 @@ function Board() {
 
     this.assignNewTile = (number = diceANumber()) => {
         const emptyTiles = this.getEmptyTiles();
+        if (emptyTiles.length <= 0) {
+            return false;
+        }
         const location = Math.floor(Math.random() * emptyTiles.length);
         this.setTile(emptyTiles[location].x, emptyTiles[location].y, number);
+        return true;
     }
 
     this.move = (direction) => {
         resetMergedTile();
+        this.moved = false;
         switch (direction.toUpperCase()) {
             case 'UP':
                 for (let i = 0; i < BoardSize; i++) {
@@ -77,6 +83,7 @@ function Board() {
                 }
                 break;
             default:
+                return false;
         }
     }
 
@@ -98,11 +105,13 @@ function Board() {
                 if (valueOnNextLocation === 0) {
                     tiles[nextLocation.x][nextLocation.y] = currentValue;
                     tiles[currentLocation.x][currentLocation.y] = 0;
+                    this.moved = true;
                     currentLocation = nextLocation;
                 } else if (valueOnNextLocation === currentValue && isUnmergedTile(nextLocation)) {
                     tiles[nextLocation.x][nextLocation.y] = currentValue * 2;
                     tiles[currentLocation.x][currentLocation.y] = 0;
                     unmergedTiles[nextLocation.x][nextLocation.y] = false;
+                    this.moved = true;
                     break;
                 } else {
                     break;
